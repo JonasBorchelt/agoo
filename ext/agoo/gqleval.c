@@ -548,8 +548,10 @@ eval_post(agooErr err, agooReq req) {
 	}
     }
     if (NULL == (s = agoo_req_header_value(req, "Content-Type", &len))) {
-	agoo_err_set(err, AGOO_ERR_TYPE, "required Content-Type not in the HTTP header");
-	return NULL;
+        if (NULL == (s = agoo_req_header_value(req, "content-type", &len))) {
+            agoo_err_set(err, AGOO_ERR_TYPE, "required Content-Type/content-type not in the HTTP header");
+            return NULL;
+        }
     }
     if (0 == strncmp(graphql_content_type, s, sizeof(graphql_content_type) - 1)) {
 	if (NULL == (doc = sdl_parse_doc(err, req->body.start, req->body.len, vars, GQL_QUERY))) {
